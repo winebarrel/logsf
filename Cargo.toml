@@ -1,0 +1,16 @@
+[package]
+name = "logsf"
+version = "0.1.0"
+authors = ["winebarrel <sugawara@winebarrel.jp>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+getopts = "0.2"
+regex = "1.3"
+dtparse = "1.1"
+chrono = "0.4"
+rusoto_core = "0.44.0"
+rusoto_logs = "0.44.0"
+tokio = "0.2"
