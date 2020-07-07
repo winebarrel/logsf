@@ -15,6 +15,7 @@ pub struct Options {
   pub filter: Option<Regex>,
   pub start_time: Option<i64>,
   pub verbose: bool,
+  pub wait: u64,
 }
 
 fn print_usage(program: &str, opts: getopts::Options) {
@@ -31,6 +32,7 @@ pub fn parse_opts() -> Options {
   opts.optopt("s", "log-stream-name", "log stream name", "NAME");
   opts.optopt("f", "filter", "log stream filter regex", "REGEX");
   opts.optopt("t", "start-time", "event start time", "TIME");
+  opts.optopt("w", "wait", "loop interval sec", "SEC");
   opts.optflag("V", "verbose", "verbose output");
   opts.optflag("v", "version", "print version and exit");
   opts.optflag("h", "help", "print usage and exit");
@@ -63,5 +65,6 @@ pub fn parse_opts() -> Options {
     filter: filter,
     start_time: start_time,
     verbose: matches.opt_present("V"),
+    wait: matches.opt_get_default("w", 1).unwrap(),
   }
 }

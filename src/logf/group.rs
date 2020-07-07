@@ -3,18 +3,19 @@ extern crate rusoto_logs;
 
 use chrono::TimeZone;
 use regex::Regex;
-use rusoto_logs::{
-  CloudWatchLogs, CloudWatchLogsClient, DescribeLogStreamsRequest, GetLogEventsRequest,
-  OutputLogEvent,
-};
+use rusoto_logs::{CloudWatchLogs, DescribeLogStreamsRequest, GetLogEventsRequest, OutputLogEvent};
+use std::io;
 use std::{error, thread, time, vec::Vec};
 
-async fn get_log_stream_names(
-  client: &CloudWatchLogsClient,
+async fn get_log_stream_names<C>(
+  client: &C,
   log_group_name: &str,
   filter: &Option<Regex>,
   last_timestamp: i64,
-) -> Result<Vec<String>, Box<dyn error::Error>> {
+) -> Result<Vec<String>, Box<dyn error::Error>>
+where
+  C: CloudWatchLogs,
+{
   let mut next_token = None;
   let mut log_stream_names = vec![];
 
@@ -64,13 +65,19 @@ async fn get_log_stream_names(
   Ok(log_stream_names)
 }
 
-pub async fn print_group_log_events(
-  client: &CloudWatchLogsClient,
+pub async fn print_group_log_events<C, O>(
+  client: &C,
   log_group_name: &str,
   filter: Option<Regex>,
   start_time: Option<i64>,
   verbose: bool,
-) -> Result<(), Box<dyn error::Error>> {
+  out: &mut O,
+  wait: Option<u64>,
+) -> Result<(), Box<dyn error::Error>>
+where
+  C: CloudWatchLogs,
+  O: io::Write,
+{
   let mut last_timestamp = if let Some(ts) = start_time {
     ts
   } else {
@@ -79,7 +86,7 @@ pub async fn print_group_log_events(
 
   loop {
     let log_stream_names =
-      get_log_stream_names(&client, log_group_name, &filter, last_timestamp).await?;
+      get_log_stream_names(client, log_group_name, &filter, last_timestamp).await?;
 
     let mut stream_log_events: Vec<(String, OutputLogEvent)> = vec![];
 
@@ -113,14 +120,20 @@ pub async fn print_group_log_events(
 
       if verbose {
         let ts = chrono::Local.timestamp_millis(timestamp);
-        println!("{}\t{}\t{}", log_stream_name, ts.to_rfc3339(), message);
+        writeln!(out, "{}\t{}\t{}", log_stream_name, ts.to_rfc3339(), message)?
       } else {
-        println!("{}", message);
+        writeln!(out, "{}", message)?
       }
 
       last_timestamp = timestamp;
     }
 
-    thread::sleep(time::Duration::from_secs(1));
+    if let Some(s) = wait {
+      thread::sleep(time::Duration::from_secs(s));
+    } else {
+      break;
+    }
   }
+
+  Ok(())
 }
