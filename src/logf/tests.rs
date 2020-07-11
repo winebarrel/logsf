@@ -7,6 +7,7 @@ use rusoto_core::Region;
 use rusoto_logs::CloudWatchLogsClient;
 use rusoto_mock::{MockCredentialsProvider, MockRequestDispatcher, MultipleMockRequestDispatcher};
 use serde::Serialize;
+use std::env;
 
 #[derive(Debug, Serialize)]
 struct LogStream {
@@ -39,6 +40,7 @@ struct GeloLogEventsResponse {
 
 #[tokio::test]
 async fn test_stream_tailf() {
+  env::set_var("TZ", "Asia/Tokyo");
   let mut buf = vec![];
 
   let client = CloudWatchLogsClient::new_with(
@@ -77,6 +79,7 @@ async fn test_stream_tailf() {
 
 #[tokio::test]
 async fn test_stream_tailf_verbose() {
+  env::set_var("TZ", "Asia/Tokyo");
   let mut buf = vec![];
 
   let client = CloudWatchLogsClient::new_with(
@@ -118,6 +121,7 @@ async fn test_stream_tailf_verbose() {
 
 #[tokio::test]
 async fn test_group_tailf() {
+  env::set_var("TZ", "Asia/Tokyo");
   let mut buf = vec![];
 
   let responses = vec![
@@ -189,6 +193,7 @@ async fn test_group_tailf() {
 
 #[tokio::test]
 async fn test_group_tailf_verbose() {
+  env::set_var("TZ", "Asia/Tokyo");
   let mut buf = vec![];
 
   let responses = vec![
