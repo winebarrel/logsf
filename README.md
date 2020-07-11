@@ -15,6 +15,7 @@ Options:
     -f, --filter REGEX  log stream filter regex
     -t, --start-time TIME
                         event start time
+    -w, --wait SEC      loop interval sec
     -V, --verbose       verbose output
     -v, --version       print version and exit
     -h, --help          print usage and exit
