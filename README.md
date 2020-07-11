@@ -2,6 +2,8 @@
 
 logsf is a tool to follow tail messages of CloudWatch Logs.
 
+[![Build Status](https://travis-ci.org/winebarrel/logsf.svg?branch=master)](https://travis-ci.org/winebarrel/logsf)
+
 ## Usage
 
 ```
