@@ -1,4 +1,3 @@
-extern crate async_trait;
 extern crate rusoto_mock;
 extern crate serde_json;
 
