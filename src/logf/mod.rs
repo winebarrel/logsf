@@ -18,7 +18,7 @@ pub async fn tailf<C, W>(
   client: &C,
   log_group_name: &str,
   log_stream_name: Option<String>,
-  filter: Option<Regex>,
+  stream_filter: Option<Regex>,
   start_time: Option<i64>,
   verbose: bool,
   out: &mut W,
@@ -43,7 +43,7 @@ where
     print_group_log_events(
       client,
       &log_group_name,
-      filter,
+      stream_filter,
       start_time,
       verbose,
       out,

@@ -14,7 +14,8 @@ Options:
                         log group name
     -s, --log-stream-name NAME
                         log stream name
-    -f, --filter REGEX  log stream filter regex
+    -f, --stream-filter REGEX
+                        log stream filter regex
     -t, --start-time TIME
                         event start time
     -w, --wait SEC      loop interval sec

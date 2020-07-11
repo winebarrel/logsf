@@ -12,7 +12,7 @@ const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 pub struct Options {
   pub log_group_name: String,
   pub log_stream_name: Option<String>,
-  pub filter: Option<Regex>,
+  pub stream_filter: Option<Regex>,
   pub start_time: Option<i64>,
   pub verbose: bool,
   pub wait: u64,
@@ -30,7 +30,7 @@ pub fn parse_opts() -> Options {
 
   opts.optopt("g", "log-group-name", "log group name", "NAME");
   opts.optopt("s", "log-stream-name", "log stream name", "NAME");
-  opts.optopt("f", "filter", "log stream filter regex", "REGEX");
+  opts.optopt("f", "stream-filter", "log stream filter regex", "REGEX");
   opts.optopt("t", "start-time", "event start time", "TIME");
   opts.optopt("w", "wait", "loop interval sec", "SEC");
   opts.optflag("V", "verbose", "verbose output");
@@ -49,7 +49,7 @@ pub fn parse_opts() -> Options {
     process::exit(0)
   }
 
-  let filter = match matches.opt_str("f") {
+  let stream_filter = match matches.opt_str("f") {
     Some(re) => Some(Regex::new(&re).unwrap()),
     None => None,
   };
@@ -62,7 +62,7 @@ pub fn parse_opts() -> Options {
   Options {
     log_group_name: matches.opt_str("g").unwrap(),
     log_stream_name: matches.opt_str("s"),
-    filter: filter,
+    stream_filter: stream_filter,
     start_time: start_time,
     verbose: matches.opt_present("V"),
     wait: matches.opt_get_default("w", 1).unwrap(),

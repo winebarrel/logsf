@@ -10,7 +10,7 @@ use std::{error, thread, time, vec::Vec};
 async fn get_log_stream_names<C>(
   client: &C,
   log_group_name: &str,
-  filter: &Option<Regex>,
+  stream_filter: &Option<Regex>,
   last_timestamp: i64,
 ) -> Result<Vec<String>, Box<dyn error::Error>>
 where
@@ -46,7 +46,7 @@ where
 
       let log_stream_name = log_stream.log_stream_name.unwrap();
 
-      if let Some(re) = filter {
+      if let Some(re) = stream_filter {
         if !re.is_match(&log_stream_name) {
           continue;
         }
@@ -68,7 +68,7 @@ where
 pub async fn print_group_log_events<C, O>(
   client: &C,
   log_group_name: &str,
-  filter: Option<Regex>,
+  stream_filter: Option<Regex>,
   start_time: Option<i64>,
   verbose: bool,
   out: &mut O,
@@ -86,7 +86,7 @@ where
 
   loop {
     let log_stream_names =
-      get_log_stream_names(client, log_group_name, &filter, last_timestamp).await?;
+      get_log_stream_names(client, log_group_name, &stream_filter, last_timestamp).await?;
 
     let mut stream_log_events: Vec<(String, OutputLogEvent)> = vec![];
 

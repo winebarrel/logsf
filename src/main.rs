@@ -17,7 +17,7 @@ async fn main() {
     &client,
     &opts.log_group_name,
     opts.log_stream_name,
-    opts.filter,
+    opts.stream_filter,
     opts.start_time,
     opts.verbose,
     &mut out.lock(),
