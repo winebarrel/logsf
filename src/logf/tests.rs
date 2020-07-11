@@ -1,39 +1,10 @@
+use super::mock::{DescribeLogStreamsResponse, GeloLogEventsResponse};
 use crate::tailf;
 use regex::Regex;
 use rusoto_core::Region;
 use rusoto_logs::CloudWatchLogsClient;
 use rusoto_mock::{MockCredentialsProvider, MockRequestDispatcher, MultipleMockRequestDispatcher};
-use serde::Serialize;
 use std::env;
-
-#[derive(Debug, Serialize)]
-struct LogStream {
-  #[serde(rename = "logStreamName")]
-  log_stream_name: String,
-  #[serde(rename = "lastIngestionTime", skip_serializing_if = "Option::is_none")]
-  last_ingestion_time: Option<i64>,
-}
-
-#[derive(Debug, Serialize)]
-struct DescribeLogStreamsResponse {
-  #[serde(rename = "logStreams")]
-  log_streams: Vec<LogStream>,
-  #[serde(rename = "nextToken", skip_serializing_if = "Option::is_none")]
-  next_token: Option<String>,
-}
-
-#[derive(Debug, Serialize)]
-struct LogEvent {
-  message: String,
-  timestamp: i64,
-}
-
-#[derive(Debug, Serialize)]
-struct GeloLogEventsResponse {
-  events: Vec<LogEvent>,
-  #[serde(rename = "nextForwardToken", skip_serializing_if = "Option::is_none")]
-  next_forward_token: Option<String>,
-}
 
 #[tokio::test]
 async fn test_stream_tailf() {
@@ -41,19 +12,10 @@ async fn test_stream_tailf() {
   let mut buf = vec![];
 
   let client = CloudWatchLogsClient::new_with(
-    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse {
-      events: vec![
-        LogEvent {
-          message: "hello".to_string(),
-          timestamp: 0,
-        },
-        LogEvent {
-          message: "world".to_string(),
-          timestamp: 0,
-        },
-      ],
-      next_forward_token: None,
-    }),
+    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
+      vec![("hello", 0), ("world", 0)],
+      None,
+    )),
     MockCredentialsProvider,
     Region::UsEast1,
   );
@@ -80,19 +42,10 @@ async fn test_stream_tailf_verbose() {
   let mut buf = vec![];
 
   let client = CloudWatchLogsClient::new_with(
-    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse {
-      events: vec![
-        LogEvent {
-          message: "hello".to_string(),
-          timestamp: 0,
-        },
-        LogEvent {
-          message: "world".to_string(),
-          timestamp: 0,
-        },
-      ],
-      next_forward_token: None,
-    }),
+    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
+      vec![("hello", 0), ("world", 0)],
+      None,
+    )),
     MockCredentialsProvider,
     Region::UsEast1,
   );
@@ -123,45 +76,18 @@ async fn test_group_tailf() {
   let mut buf = vec![];
 
   let responses = vec![
-    MockRequestDispatcher::default().with_json_body(DescribeLogStreamsResponse {
-      log_streams: vec![
-        LogStream {
-          log_stream_name: "stream1".to_string(),
-          last_ingestion_time: Some(1),
-        },
-        LogStream {
-          log_stream_name: "stream2".to_string(),
-          last_ingestion_time: Some(2),
-        },
-      ],
-      next_token: None,
-    }),
-    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse {
-      events: vec![
-        LogEvent {
-          message: "event1".to_string(),
-          timestamp: 3,
-        },
-        LogEvent {
-          message: "event2".to_string(),
-          timestamp: 3,
-        },
-      ],
-      next_forward_token: None,
-    }),
-    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse {
-      events: vec![
-        LogEvent {
-          message: "event3".to_string(),
-          timestamp: 3,
-        },
-        LogEvent {
-          message: "event4".to_string(),
-          timestamp: 3,
-        },
-      ],
-      next_forward_token: None,
-    }),
+    MockRequestDispatcher::default().with_json_body(DescribeLogStreamsResponse::new(
+      vec![("stream1", Some(1)), ("stream2", Some(2))],
+      None,
+    )),
+    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
+      vec![("event1", 3), ("event2", 3)],
+      None,
+    )),
+    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
+      vec![("event3", 3), ("event4", 3)],
+      None,
+    )),
   ];
 
   let client = CloudWatchLogsClient::new_with(
@@ -195,45 +121,18 @@ async fn test_group_tailf_verbose() {
   let mut buf = vec![];
 
   let responses = vec![
-    MockRequestDispatcher::default().with_json_body(DescribeLogStreamsResponse {
-      log_streams: vec![
-        LogStream {
-          log_stream_name: "stream1".to_string(),
-          last_ingestion_time: Some(1),
-        },
-        LogStream {
-          log_stream_name: "stream2".to_string(),
-          last_ingestion_time: Some(2),
-        },
-      ],
-      next_token: None,
-    }),
-    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse {
-      events: vec![
-        LogEvent {
-          message: "event1".to_string(),
-          timestamp: 3,
-        },
-        LogEvent {
-          message: "event2".to_string(),
-          timestamp: 3,
-        },
-      ],
-      next_forward_token: None,
-    }),
-    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse {
-      events: vec![
-        LogEvent {
-          message: "event3".to_string(),
-          timestamp: 3,
-        },
-        LogEvent {
-          message: "event4".to_string(),
-          timestamp: 3,
-        },
-      ],
-      next_forward_token: None,
-    }),
+    MockRequestDispatcher::default().with_json_body(DescribeLogStreamsResponse::new(
+      vec![("stream1", Some(1)), ("stream2", Some(2))],
+      None,
+    )),
+    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
+      vec![("event1", 3), ("event2", 3)],
+      None,
+    )),
+    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
+      vec![("event3", 3), ("event4", 3)],
+      None,
+    )),
   ];
 
   let client = CloudWatchLogsClient::new_with(
@@ -270,39 +169,14 @@ async fn test_group_tailf_with_stream_filter() {
   let mut buf = vec![];
 
   let responses = vec![
-    MockRequestDispatcher::default().with_json_body(DescribeLogStreamsResponse {
-      log_streams: vec![
-        LogStream {
-          log_stream_name: "stream1".to_string(),
-          last_ingestion_time: Some(1),
-        },
-        LogStream {
-          log_stream_name: "stream2".to_string(),
-          last_ingestion_time: Some(2),
-        },
-      ],
-      next_token: None,
-    }),
-    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse {
-      events: vec![
-        LogEvent {
-          message: "event1".to_string(),
-          timestamp: 3,
-        },
-        LogEvent {
-          message: "event2".to_string(),
-          timestamp: 3,
-        },
-      ],
-      next_forward_token: None,
-    }),
-    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse {
-      events: vec![LogEvent {
-        message: "event3".to_string(), // never read
-        timestamp: 3,
-      }],
-      next_forward_token: None,
-    }),
+    MockRequestDispatcher::default().with_json_body(DescribeLogStreamsResponse::new(
+      vec![("stream1", Some(1)), ("stream2", Some(2))],
+      None,
+    )),
+    MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
+      vec![("event1", 3), ("event2", 3)],
+      None,
+    )),
   ];
 
   let client = CloudWatchLogsClient::new_with(

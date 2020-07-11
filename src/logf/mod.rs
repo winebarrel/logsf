@@ -5,6 +5,8 @@ mod group;
 mod stream;
 
 #[cfg(test)]
+mod mock;
+#[cfg(test)]
 mod tests;
 
 use group::print_group_log_events;
