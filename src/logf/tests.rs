@@ -114,7 +114,8 @@ async fn test_stream_tailf_verbose() {
 
   assert_eq!(
     String::from_utf8(buf).unwrap(),
-    "1970-01-01T09:00:00+09:00\thello\n1970-01-01T09:00:00+09:00\tworld\n"
+    "1970-01-01T09:00:00+09:00\thello
+1970-01-01T09:00:00+09:00\tworld\n"
   );
 }
 
