@@ -1,6 +1,3 @@
-extern crate rusoto_core;
-extern crate rusoto_logs;
-
 mod group;
 mod stream;
 
