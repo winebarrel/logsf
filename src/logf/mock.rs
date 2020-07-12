@@ -18,11 +18,11 @@ pub struct DescribeLogStreamsResponse {
 
 impl DescribeLogStreamsResponse {
   pub fn new(
-    events: Vec<(&str, Option<i64>)>,
+    log_streams: Vec<(&str, Option<i64>)>,
     next_token: Option<String>,
   ) -> DescribeLogStreamsResponse {
     DescribeLogStreamsResponse {
-      log_streams: events
+      log_streams: log_streams
         .iter()
         .map(|s| LogStream {
           log_stream_name: s.0.to_string(),
