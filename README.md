@@ -23,3 +23,16 @@ Options:
     -v, --version       print version and exit
     -h, --help          print usage and exit
 ```
+
+```
+$ logsf -g my-group -s my-stream -V
+2020-05-13T01:51:18+09:00 foo
+2020-05-13T01:51:18+09:00 bar
+2020-05-13T01:51:19+09:00 zoo
+...
+$ logsf -g my-group -f ^stream-prefix- -V
+stream-prefix-1 2020-05-13T01:51:18+09:00 foo
+stream-prefix-2 2020-05-13T01:51:18+09:00 bar
+stream-prefix-1 2020-05-13T01:51:19+09:00 zoo
+...
+```
