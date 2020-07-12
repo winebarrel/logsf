@@ -1,6 +1,3 @@
-extern crate chrono;
-extern crate rusoto_logs;
-
 use chrono::TimeZone;
 use regex::Regex;
 use rusoto_logs::{CloudWatchLogs, DescribeLogStreamsRequest, GetLogEventsRequest, OutputLogEvent};
