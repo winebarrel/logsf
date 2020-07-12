@@ -13,7 +13,7 @@ async fn test_stream_tailf() {
 
   let client = CloudWatchLogsClient::new_with(
     MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
-      vec![("hello", 0), ("world", 0)],
+      &[("hello", 0), ("world", 0)],
       None,
     )),
     MockCredentialsProvider,
@@ -43,7 +43,7 @@ async fn test_stream_tailf_verbose() {
 
   let client = CloudWatchLogsClient::new_with(
     MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
-      vec![("hello", 0), ("world", 0)],
+      &[("hello", 0), ("world", 0)],
       None,
     )),
     MockCredentialsProvider,
@@ -77,15 +77,15 @@ async fn test_group_tailf() {
 
   let responses = vec![
     MockRequestDispatcher::default().with_json_body(DescribeLogStreamsResponse::new(
-      vec![("stream1", Some(1)), ("stream2", Some(2))],
+      &[("stream1", Some(1)), ("stream2", Some(2))],
       None,
     )),
     MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
-      vec![("event1", 3), ("event2", 3)],
+      &[("event1", 3), ("event2", 3)],
       None,
     )),
     MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
-      vec![("event3", 3), ("event4", 3)],
+      &[("event3", 3), ("event4", 3)],
       None,
     )),
   ];
@@ -122,15 +122,15 @@ async fn test_group_tailf_verbose() {
 
   let responses = vec![
     MockRequestDispatcher::default().with_json_body(DescribeLogStreamsResponse::new(
-      vec![("stream1", Some(1)), ("stream2", Some(2))],
+      &[("stream1", Some(1)), ("stream2", Some(2))],
       None,
     )),
     MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
-      vec![("event1", 3), ("event2", 3)],
+      &[("event1", 3), ("event2", 3)],
       None,
     )),
     MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
-      vec![("event3", 3), ("event4", 3)],
+      &[("event3", 3), ("event4", 3)],
       None,
     )),
   ];
@@ -170,11 +170,11 @@ async fn test_group_tailf_with_stream_filter() {
 
   let responses = vec![
     MockRequestDispatcher::default().with_json_body(DescribeLogStreamsResponse::new(
-      vec![("stream1", Some(1)), ("stream2", Some(2))],
+      &[("stream1", Some(1)), ("stream2", Some(2))],
       None,
     )),
     MockRequestDispatcher::default().with_json_body(GeloLogEventsResponse::new(
-      vec![("event1", 3), ("event2", 3)],
+      &[("event1", 3), ("event2", 3)],
       None,
     )),
   ];

@@ -18,7 +18,7 @@ pub struct DescribeLogStreamsResponse {
 
 impl DescribeLogStreamsResponse {
   pub fn new(
-    log_streams: Vec<(&str, Option<i64>)>,
+    log_streams: &[(&str, Option<i64>)],
     next_token: Option<String>,
   ) -> DescribeLogStreamsResponse {
     DescribeLogStreamsResponse {
@@ -48,10 +48,7 @@ pub struct GeloLogEventsResponse {
 }
 
 impl GeloLogEventsResponse {
-  pub fn new(
-    events: Vec<(&str, i64)>,
-    next_forward_token: Option<String>,
-  ) -> GeloLogEventsResponse {
+  pub fn new(events: &[(&str, i64)], next_forward_token: Option<String>) -> GeloLogEventsResponse {
     GeloLogEventsResponse {
       events: events
         .iter()
